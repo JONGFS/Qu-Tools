@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 
 class ResolutionStatus(StrEnum):
+    MATCHED = "MATCHED"
     UNCHANGED = "UNCHANGED"
     UPDATED = "UPDATED"
     MISSING = "MISSING"
