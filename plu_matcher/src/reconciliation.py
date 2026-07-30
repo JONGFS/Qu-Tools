@@ -24,6 +24,7 @@ HEADER_ROW = 8
 
 STATUS_MATCH = ReconciliationStatus.MATCH
 STATUS_MULTIPLE_PATHS = ReconciliationStatus.MATCH_MULTIPLE_PATHS
+STATUS_ID_UPDATED = ReconciliationStatus.PLU_MATCH_ID_UPDATED
 STATUS_AMBIGUOUS = ReconciliationStatus.AMBIGUOUS_QU_ITEM
 STATUS_CONFLICT = ReconciliationStatus.EXISTING_MAPPING_CONFLICT
 STATUS_MISMATCH = ReconciliationStatus.PLU_MISMATCH_REVIEW
@@ -200,16 +201,18 @@ def decide_reconciliation(
         and existing_item_id != proposed_item_id
     ):
         return ReconciliationDecision(
-            status=STATUS_CONFLICT,
+            status=STATUS_ID_UPDATED,
             proposed_item_id=proposed_item_id,
             proposed_item_name=proposed_name,
             path_count=len(proposed_nodes),
             candidates=candidate_text,
             notes=(
-                f"Existing QU item {existing_item_id} "
-                f"({existing_item_name or 'unnamed'}) was preserved. "
-                "The exact PLU points to a different unique QU item."
+                f"Exact PLU {aloha_plu} uniquely identifies QU item "
+                f"{proposed_item_id}; previous QU item "
+                f"{existing_item_id} "
+                f"({existing_item_name or 'unnamed'}) was replaced."
             ),
+            apply_mapping=True,
         )
 
     status = (
@@ -282,6 +285,9 @@ def reconcile_workbook(
     source_workbook: Path,
     menu_path: Path,
     output_workbook: Path,
+    *,
+    include_unmigrated: bool = False,
+    provenance: dict | None = None,
 ) -> Counter:
     if source_workbook.resolve() == output_workbook.resolve():
         raise ValueError("Output workbook must not overwrite the source.")
@@ -326,6 +332,18 @@ def reconcile_workbook(
             sheet.cell(row_number, columns["Number"]).value
         )
         if not aloha_plu:
+            continue
+
+        migrated = str(
+            value_sheet.cell(
+                row_number,
+                columns["Migrated to Qu?"],
+            ).value
+            or ""
+        ).strip().casefold()
+        if migrated != "yes" and not include_unmigrated:
+            for header in AUDIT_HEADERS:
+                sheet.cell(row_number, columns[header]).value = None
             continue
 
         existing_id_value = value_sheet.cell(
@@ -394,8 +412,44 @@ def reconcile_workbook(
         workbook.remove(workbook[summary_name])
     summary = workbook.create_sheet(summary_name, 0)
     summary.append(["Aloha to QU Reconciliation", None])
+    menu_context = menu.get("context") or {}
+    provenance = provenance or {}
     summary.append(["Source workbook", source_workbook.name])
-    summary.append(["Menu JSON", menu_path.name])
+    summary.append(["Menu JSON", str(menu_path)])
+    summary.append(["Menu snapshot ID", menu.get("menuSnapshotId")])
+    summary.append(
+        [
+            "Menu generation time",
+            provenance.get("generation_time"),
+        ]
+    )
+    summary.append(
+        [
+            "Location ID",
+            menu_context.get("locationId")
+            or provenance.get("location_id"),
+        ]
+    )
+    summary.append(
+        [
+            "Order channel ID",
+            menu_context.get("orderChannelId")
+            or provenance.get("order_channel_id"),
+        ]
+    )
+    summary.append(
+        [
+            "Order type ID",
+            menu_context.get("orderTypeId")
+            or provenance.get("order_type_id"),
+        ]
+    )
+    summary.append(
+        [
+            "Cache last checked",
+            provenance.get("last_checked_at"),
+        ]
+    )
     summary.append(["Status", "Count"])
     for status, count in sorted(counts.items()):
         summary.append([status, count])
@@ -404,12 +458,13 @@ def reconcile_workbook(
     summary["A1"].font = Font(bold=True, color="FFFFFF", size=14)
     summary["A1"].fill = PatternFill("solid", fgColor="1F4E78")
     summary.merge_cells("A1:B1")
-    for cell in summary[4]:
+    status_header_row = summary.max_row - len(counts) - 1
+    for cell in summary[status_header_row]:
         cell.font = Font(bold=True, color="FFFFFF")
         cell.fill = PatternFill("solid", fgColor="5B9BD5")
     summary.column_dimensions["A"].width = 36
     summary.column_dimensions["B"].width = 55
-    summary.freeze_panes = "A5"
+    summary.freeze_panes = f"A{status_header_row + 1}"
 
     workbook.calculation.calcMode = "auto"
     workbook.calculation.fullCalcOnLoad = True

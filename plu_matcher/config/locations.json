@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "demo": {
+      "displayName": "Sanitized Offline Demo",
+      "locationId": 99999,
+      "orderChannelId": 1,
+      "orderTypeId": 1,
+      "sourceWorkbook": "inputs/Aloha_Qu_Menu_Demo.xlsx"
+    },
+    "atlanta": {
+      "displayName": "Atlanta",
+      "locationId": 11934,
+      "orderChannelId": 4685,
+      "orderTypeId": 4723,
+      "sourceWorkbook": "inputs/Aloha_Qu_Menu.xlsx"
+    },
+    "nyc": {
+      "displayName": "New York City",
+      "locationId": 11526,
+      "orderChannelId": 4685,
+      "orderTypeId": 4723,
+      "sourceWorkbook": "inputs/Aloha_Qu_Menu.xlsx"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+# Credentials and local environments
+**/.env
+**/.env.*
+!**/.env.example
+**/.venv/
+**/venv/
+
+# Python and test artifacts
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+.pytest-*/
+
+# Private inputs and generated outputs
+**/cache/
+**/inputs/
+**/outputs/
+**/runs/
+**/private_data/*
+**/*.xlsx
+**/*.xls
+**/*.csv
+
+# Local duplicate experiment retained on disk; `plu_matcher/` is canonical.
+/menu_refresher/

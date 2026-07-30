@@ -16,6 +16,7 @@ class ResolutionStatus(StrEnum):
 class ReconciliationStatus(StrEnum):
     MATCH = "MATCH"
     MATCH_MULTIPLE_PATHS = "MATCH_MULTIPLE_PATHS"
+    PLU_MATCH_ID_UPDATED = "PLU_MATCH_ID_UPDATED"
     AMBIGUOUS_QU_ITEM = "AMBIGUOUS_QU_ITEM"
     EXISTING_MAPPING_CONFLICT = "EXISTING_MAPPING_CONFLICT"
     PLU_MISMATCH_REVIEW = "PLU_MISMATCH_REVIEW"
@@ -27,6 +28,7 @@ SAFE_RECONCILIATION_STATUSES = frozenset(
     {
         ReconciliationStatus.MATCH,
         ReconciliationStatus.MATCH_MULTIPLE_PATHS,
+        ReconciliationStatus.PLU_MATCH_ID_UPDATED,
     }
 )
 

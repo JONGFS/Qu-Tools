@@ -32,3 +32,18 @@ def test_load_settings_temporarily_supports_session_id(monkeypatch):
     settings = load_settings()
 
     assert settings.client_secret == "legacy-secret-value"
+
+
+def test_profile_context_overrides_environment(monkeypatch):
+    _set_required_environment(monkeypatch)
+    monkeypatch.setenv("QU_CLIENT_SECRET", "secret-value")
+
+    settings = load_settings(
+        location_id=11526,
+        order_channel_id=4688,
+        order_type_id=4725,
+    )
+
+    assert settings.location_id == 11526
+    assert settings.order_channel_id == 4688
+    assert settings.order_type_id == 4725

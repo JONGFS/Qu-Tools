@@ -9,7 +9,7 @@ from src.models import SAFE_RECONCILIATION_STATUSES
 
 
 DEFAULT_WORKBOOK = Path(
-    "outputs/Aloha_Qu_Menu_Reconciled.xlsx"
+    "outputs/Aloha_Qu_Menu_Reconciled_Latest.xlsx"
 )
 SAFE_STATUS_VALUES = {
     status.value for status in SAFE_RECONCILIATION_STATUSES

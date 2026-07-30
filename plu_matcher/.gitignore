@@ -1,9 +1,10 @@
-# Credentials
+# Credentials and machine-local configuration
 .env
 .env.*
 !.env.example
+config/locations.local.json
 
-# Real QU API responses and cached menus
+# Real QU responses and cached menus
 cache/
 data/
 downloads/
@@ -13,15 +14,18 @@ private_data/*
 current_menu.json
 menu_*.json
 *_menu_export.json
-.env
+
 # Company spreadsheets and mappings
+inputs/*
+!inputs/.gitkeep
 *.xlsx
 *.xls
 *.csv
 !fixtures/*_sanitized.csv
 !fixtures/*.example.csv
 
-# Generated results
+# Generated runs and reports
+runs/
 output/
 outputs/
 reports/
@@ -30,13 +34,19 @@ generated_config.json
 # Logs
 *.log
 
-# Python
+# Python build and test artifacts
 __pycache__/
 *.py[cod]
 .venv/
 venv/
 .pytest_cache/
+.pytest-*/
+build/
+dist/
+*.egg-info/
 
-# IDE
+# IDE and operating-system files
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db

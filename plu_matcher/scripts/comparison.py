@@ -11,9 +11,11 @@ from src.menu_parser import flatten_menu, index_by_item_id
 from src.models import ApprovedMapping, MenuNode, PathResolution
 
 
-DEFAULT_MENU_PATH = Path("private_data/response+Alc.json")
+DEFAULT_MENU_PATH = Path(
+    "cache/11934-4685-4723/menu.json"
+)
 DEFAULT_WORKBOOK_PATH = Path(
-    "outputs/Aloha_Qu_Menu_Reconciled.xlsx"
+    "outputs/Aloha_Qu_Menu_Reconciled_Latest.xlsx"
 )
 
 

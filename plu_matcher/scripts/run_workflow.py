@@ -2,6 +2,7 @@
 
 import argparse
 from collections import Counter
+import json
 from pathlib import Path
 
 from src.reconciliation import reconcile_workbook
@@ -10,11 +11,13 @@ from .comparison import load_comparison
 
 
 DEFAULT_SOURCE = Path(
-    "private_data/Aloha_Qu_Menu_In_Progress.xlsx"
-)
-DEFAULT_MENU = Path("private_data/response+Alc.json")
-DEFAULT_OUTPUT = Path(
     "outputs/Aloha_Qu_Menu_Reconciled.xlsx"
+)
+DEFAULT_MENU = Path(
+    "cache/11934-4685-4723/menu.json"
+)
+DEFAULT_OUTPUT = Path(
+    "outputs/Aloha_Qu_Menu_Reconciled_Latest.xlsx"
 )
 
 
@@ -25,13 +28,27 @@ def main() -> None:
     parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
     parser.add_argument("--menu", type=Path, default=DEFAULT_MENU)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--include-unmigrated",
+        action="store_true",
+        help="Also discover and backfill rows not marked Migrated to Qu.",
+    )
     args = parser.parse_args()
+
+    metadata_path = args.menu.with_name("metadata.json")
+    provenance = {}
+    if metadata_path.exists():
+        provenance = json.loads(
+            metadata_path.read_text(encoding="utf-8")
+        )
 
     try:
         reconciliation_counts = reconcile_workbook(
             source_workbook=args.source,
             menu_path=args.menu,
             output_workbook=args.output,
+            include_unmigrated=args.include_unmigrated,
+            provenance=provenance,
         )
     except PermissionError as error:
         raise SystemExit(
@@ -65,6 +82,10 @@ def main() -> None:
     )
     print(
         "  python -m scripts.print_path_review "
+        f'--menu "{args.menu}" --workbook "{args.output}"'
+    )
+    print(
+        "  python -m scripts.print_plu_mismatches "
         f'--menu "{args.menu}" --workbook "{args.output}"'
     )
 
