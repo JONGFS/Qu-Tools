@@ -6,8 +6,8 @@ Start there:
 
 ```powershell
 cd plu_matcher
-.\setup.ps1
-.\run.ps1 --help
+.\setup.cmd
+.\run.cmd --help
 ```
 
 Real credentials, cached QU responses, company workbooks, and generated run

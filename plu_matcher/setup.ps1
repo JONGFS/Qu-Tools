@@ -12,6 +12,9 @@ try {
         $PythonLauncher = Get-Command py -ErrorAction SilentlyContinue
         if ($PythonLauncher) {
             & py -3 -m venv $VirtualEnvironment
+            if ($LASTEXITCODE -ne 0) {
+                throw "Could not create the local Python environment with py."
+            }
         }
         else {
             $PythonCommand = Get-Command python -ErrorAction SilentlyContinue
@@ -19,11 +22,21 @@ try {
                 throw "Python 3.11 or newer was not found on PATH."
             }
             & python -m venv $VirtualEnvironment
+            if ($LASTEXITCODE -ne 0) {
+                throw "Could not create the local Python environment with python."
+            }
         }
     }
 
-    & $VirtualPython -m pip install --upgrade pip
+    & $VirtualPython -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)"
+    if ($LASTEXITCODE -ne 0) {
+        throw "QU Tools requires Python 3.11 or newer."
+    }
+
     & $VirtualPython -m pip install -e ".[dev]"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not install QU Tools dependencies. Check package-index access and retry."
+    }
 
     $InputsDirectory = Join-Path $ProjectRoot "inputs"
     if (-not (Test-Path -LiteralPath $InputsDirectory)) {
@@ -57,8 +70,8 @@ try {
 
     Write-Host ""
     Write-Host "Setup complete."
-    Write-Host "Offline demo: .\run.ps1 run --location demo --offline"
-    Write-Host "Next: .\run.ps1 status --location atlanta"
+    Write-Host "Offline demo: .\run.cmd run --location demo --offline"
+    Write-Host "Next: .\run.cmd status --location atlanta"
 }
 finally {
     Pop-Location

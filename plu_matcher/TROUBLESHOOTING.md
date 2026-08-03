@@ -3,41 +3,47 @@
 Start with:
 
 ```powershell
-.\run.ps1 status --location atlanta
+.\run.cmd status --location atlanta
 ```
 
 Then run the failed command with `--help` to confirm its syntax. Help and status
 must not make a live menu request.
 
-## `run.ps1` says the environment is not installed
+## `run.cmd` says the environment is not installed
 
 Run:
 
 ```powershell
-.\setup.ps1
+.\setup.cmd
 ```
 
 If Python cannot be found, install Python 3.11 or newer and ensure either `py`
 or `python` is available on `PATH`.
 
-If PowerShell reports that script execution is disabled, follow the company
-PowerShell execution-policy procedure or run the equivalent commands from an
-approved shell. Do not weaken a machine-wide policy just for this tool.
+The `.cmd` launchers do not invoke PowerShell scripts and work with an
+`AllSigned` PowerShell policy. Use them instead of the optional `.ps1` files;
+do not weaken a machine-wide policy for this tool.
 
 ## `qu-tools` is not recognized
 
 Either use the wrapper:
 
 ```powershell
-.\run.ps1 run --location atlanta
+.\run.cmd run --location atlanta
 ```
 
-or activate the local environment:
+or call the environment's Python executable directly:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
-qu-tools --help
+.\.venv\Scripts\python.exe -m src.cli --help
 ```
+
+## Dependency installation fails
+
+The first `setup.cmd` run installs the packages declared in `pyproject.toml`.
+Connect to the approved corporate network or Python package index, then retry.
+The offline demo avoids QU API calls after setup; it is not an offline package
+installer.
 
 ## Missing environment variables
 
@@ -88,7 +94,7 @@ location with the QU integration owner.
 Create it with:
 
 ```powershell
-.\run.ps1 refresh-menu --location atlanta
+.\run.cmd refresh-menu --location atlanta
 ```
 
 `check-plu` and `parse-menu` require a complete context cache. `run` refreshes
@@ -106,7 +112,7 @@ The usual cause is comparing artifacts produced from different menu
 generations or workbooks. Run:
 
 ```powershell
-.\run.ps1 run --location atlanta
+.\run.cmd run --location atlanta
 ```
 
 Then use only files inside the new timestamped run directory. Confirm the

@@ -8,7 +8,7 @@ $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $VirtualPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 
 if (-not (Test-Path -LiteralPath $VirtualPython)) {
-    Write-Error "The local environment is not installed. Run .\setup.ps1 first."
+    Write-Error "The local environment is not installed. Run .\setup.cmd first."
     exit 1
 }
 

@@ -31,15 +31,16 @@ menu—not that every EI configuration screen has been independently checked.
 
 Prerequisites:
 
-- Windows PowerShell
+- Windows Command Prompt or PowerShell
 - Python 3.11 or newer
+- Access to the approved Python package index for the first setup
 - Approved QU client credentials
 - The Aloha mapping workbook
 
 From the `plu_matcher` directory:
 
 ```powershell
-.\setup.ps1
+.\setup.cmd
 ```
 
 Edit `.env` and enter the credentials issued for this integration:
@@ -62,11 +63,11 @@ inputs/Aloha_Qu_Menu.xlsx
 Confirm the profile and cache state, then run the tool:
 
 ```powershell
-.\run.ps1 status --location atlanta
-.\run.ps1 run --location atlanta
+.\run.cmd status --location atlanta
+.\run.cmd run --location atlanta
 ```
 
-`setup.ps1` installs an editable `qu-tools` command as well, so the equivalent
+`setup.cmd` installs an editable `qu-tools` command as well, so the equivalent
 command inside the activated environment is:
 
 ```powershell
@@ -77,11 +78,13 @@ Before adding credentials or a company workbook, verify the complete workflow
 with the generated sanitized demo:
 
 ```powershell
-.\run.ps1 run --location demo --offline
+.\run.cmd run --location demo --offline
 ```
 
 The demo intentionally returns exit code `2`: it includes safe PLU matches, an
 automatic stale-ID update, and one ambiguous PLU for the review report.
+`--offline` means the demo makes no QU API request; the first setup still needs
+package-index access to install Python dependencies.
 
 ## Commands
 

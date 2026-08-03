@@ -5,12 +5,12 @@ does not require editing Python code.
 
 ## Before the first run
 
-1. Run `.\setup.ps1` from the `plu_matcher` directory.
+1. Run `.\setup.cmd` from the `plu_matcher` directory.
 2. Put approved QU credentials in `.env`.
 3. Put the Aloha workbook at the `sourceWorkbook` path configured for the
    location.
 4. Verify the workbook contains the `Aloha > Qu Item Migration` worksheet.
-5. Run `.\run.ps1 status --location <name>`.
+5. Run `.\run.cmd status --location <name>`.
 
 Never commit `.env`, cached menus, real workbooks, or generated run bundles.
 
@@ -19,7 +19,7 @@ Never commit `.env`, cached menus, real workbooks, or generated run bundles.
 Setup creates a sanitized workbook and cache for the `demo` profile. Run:
 
 ```powershell
-.\run.ps1 run --location demo --offline
+.\run.cmd run --location demo --offline
 ```
 
 The expected exit code is `2` because the fixture deliberately contains one
@@ -32,7 +32,7 @@ flattening, reconciliation, provenance, and reporting without QU credentials.
 Run:
 
 ```powershell
-.\run.ps1 run --location atlanta
+.\run.cmd run --location atlanta
 ```
 
 The command uses one resolved location profile for the entire operation:
@@ -57,25 +57,25 @@ runtime failure.
 Refresh only:
 
 ```powershell
-.\run.ps1 refresh-menu --location atlanta
+.\run.cmd refresh-menu --location atlanta
 ```
 
 Check PLUs using the location's current cache:
 
 ```powershell
-.\run.ps1 check-plu --location atlanta
+.\run.cmd check-plu --location atlanta
 ```
 
 Flatten the current cache:
 
 ```powershell
-.\run.ps1 parse-menu --location atlanta
+.\run.cmd parse-menu --location atlanta
 ```
 
 Inspect the selected profile and cache:
 
 ```powershell
-.\run.ps1 status --location atlanta
+.\run.cmd status --location atlanta
 ```
 
 Use `run` for routine evidence because it keeps refresh, reconciliation, and
@@ -86,7 +86,7 @@ parser outputs together. Individual commands are useful for investigation.
 The normal command audits rows already marked `Migrated to Qu? = Yes`:
 
 ```powershell
-.\run.ps1 run --location atlanta
+.\run.cmd run --location atlanta
 ```
 
 This is the safe default for operational checks.
@@ -94,7 +94,7 @@ This is the safe default for operational checks.
 Use the following only during an intentional migration/reconciliation session:
 
 ```powershell
-.\run.ps1 run --location atlanta --include-unmigrated
+.\run.cmd run --location atlanta --include-unmigrated
 ```
 
 That option also evaluates unmigrated Aloha rows. A unique current PLU match can
@@ -179,7 +179,7 @@ Requirements:
 - Validate the profile before its first live request:
 
 ```powershell
-.\run.ps1 status --location example
+.\run.cmd status --location example
 ```
 
 Then make a complete baseline run and review every non-safe status.
